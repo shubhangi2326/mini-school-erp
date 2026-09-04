@@ -9,7 +9,7 @@ const User = require('./src/models/User');
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5000', 'https://mini-school-erp.vercel.app'],
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 app.use(express.json());
@@ -35,46 +35,20 @@ const seedAdmin = async () => {
   }
 };
 
-let isConnected = false;
-const connectDB = async () => {
-  if (isConnected) return;
-  try {
-    const db = await mongoose.connect(process.env.MONGO_URI);
-    isConnected = db.connections[0].readyState === 1;
-    console.log('Connected to MongoDB Atlas');
-    await seedAdmin();
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-    throw err;
-  }
-};
-
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    res.status(500).json({ error: 'Database connection failed' });
-  }
-});
-
-app.get('/', (req, res) => {
-  res.json({ message: 'Backend is running!' });
-});
-
-app.get('/api', (req, res) => {
-  res.json({ message: 'API is running!' });
-});
-
 app.use('/api', routes);
 
 const PORT = process.env.PORT || 5000;
-if (process.env.NODE_ENV !== 'production') {
-  connectDB().then(() => {
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('Connected to MongoDB Atlas');
+    seedAdmin();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-  }).catch(console.error);
-}
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+  });
 
 module.exports = app;
