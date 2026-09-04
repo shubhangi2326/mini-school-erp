@@ -9,9 +9,14 @@ const { markAttendance, getAttendanceHistory } = require('../controllers/attenda
 const { getStats } = require('../controllers/dashboardController');
 const { getProfile, getAttendanceStats, getAttendanceHistory: getStudentAttendanceHistory } = require('../controllers/studentDashboardController');
 
+// Auth
 const auth = require('../middlewares/auth');
 
-// Auth
+// API Health Check
+router.get('/', (req, res) => {
+  res.json({ message: 'API is running' });
+});
+
 router.post('/auth/login', login);
 
 // Users (Teachers/Admins)
