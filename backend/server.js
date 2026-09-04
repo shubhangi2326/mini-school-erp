@@ -8,8 +8,19 @@ const User = require('./src/models/User');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5000', 'https://mini-school-erp.vercel.app'],
+  credentials: true
+}));
 app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Backend is running!' });
+});
+
+app.get('/api', (req, res) => {
+  res.json({ message: 'API is running!' });
+});
 
 app.use('/api', routes);
 
