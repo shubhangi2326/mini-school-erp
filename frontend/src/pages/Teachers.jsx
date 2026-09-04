@@ -3,6 +3,7 @@ import api from '../api';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Teachers = () => {
   const [teachers, setTeachers] = useState([]);
@@ -21,6 +22,7 @@ const Teachers = () => {
       setTeachers(res.data.filter(u => u.role === 'TEACHER'));
     } catch (err) {
       console.error(err);
+      toast.error('Failed to load teachers');
     }
   };
 
@@ -30,6 +32,7 @@ const Teachers = () => {
       setClasses(res.data);
     } catch (err) {
       console.error(err);
+      toast.error('Failed to load classes');
     }
   };
 
@@ -43,8 +46,10 @@ const Teachers = () => {
     try {
       if (editingId) {
         await api.put(`/users/${editingId}`, formData);
+        toast.success('Teacher updated successfully');
       } else {
         await api.post('/users', { ...formData, role: 'TEACHER' });
+        toast.success('Teacher created successfully');
       }
       setIsModalOpen(false);
       setFormData({ name: '', email: '', phone: '', subject: '', password: '', classId: '' });
@@ -52,7 +57,7 @@ const Teachers = () => {
       fetchTeachers();
       fetchClasses();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to save teacher');
+      toast.error(err.response?.data?.error || 'Failed to save teacher');
     }
   };
 
@@ -74,9 +79,10 @@ const Teachers = () => {
     if (window.confirm('Are you sure you want to delete this teacher?')) {
       try {
         await api.delete(`/users/${id}`);
+        toast.success('Teacher deleted successfully');
         fetchTeachers();
       } catch (err) {
-        alert('Failed to delete teacher');
+        toast.error(err.response?.data?.error || 'Failed to delete teacher');
       }
     }
   };

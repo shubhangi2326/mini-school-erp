@@ -3,6 +3,7 @@ import api from '../api';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Classes = () => {
   const [classes, setClasses] = useState([]);
@@ -23,6 +24,7 @@ const Classes = () => {
       setTeachers(teachersRes.data.filter(u => u.role === 'TEACHER'));
     } catch (err) {
       console.error(err);
+      toast.error('Failed to load classes and teachers');
     }
   };
 
@@ -35,15 +37,17 @@ const Classes = () => {
     try {
       if (editingId) {
         await api.put(`/classes/${editingId}`, formData);
+        toast.success('Class updated successfully');
       } else {
         await api.post('/classes', formData);
+        toast.success('Class created successfully');
       }
       setIsModalOpen(false);
       setFormData({ name: '', teacherId: '' });
       setEditingId(null);
       fetchData();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to save class');
+      toast.error(err.response?.data?.error || 'Failed to save class');
     }
   };
 
@@ -57,9 +61,10 @@ const Classes = () => {
     if (window.confirm('Are you sure you want to delete this class? This may fail if there are assigned students.')) {
       try {
         await api.delete(`/classes/${id}`);
+        toast.success('Class deleted successfully');
         fetchData();
       } catch (err) {
-        alert('Failed to delete class. Ensure no students are assigned to it first.');
+        toast.error('Failed to delete class. Ensure no students are assigned to it first.');
       }
     }
   };

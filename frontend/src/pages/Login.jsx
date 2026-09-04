@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import { BookOpen } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,9 +18,12 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
+      toast.success('Login successful');
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      const errMsg = err.response?.data?.error || 'Login failed';
+      setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }

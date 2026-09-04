@@ -3,6 +3,7 @@ import api from '../api';
 import { AuthContext } from '../AuthContext';
 import { Users, UserSquare2, BookOpen, CalendarCheck, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Phone, Hash } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -36,7 +37,9 @@ const Dashboard = () => {
         setError(null);
       } catch (err) {
         console.error('Failed to fetch data', err);
-        setError(err.response?.data?.error || 'Failed to load data. Please check your connection.');
+        const errMsg = err.response?.data?.error || 'Failed to load data. Please check your connection.';
+        setError(errMsg);
+        toast.error('Failed to load dashboard data');
       } finally {
         setLoading(false);
       }

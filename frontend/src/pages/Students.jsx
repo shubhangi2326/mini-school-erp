@@ -3,6 +3,7 @@ import api from '../api';
 import Modal from '../components/Modal';
 import Pagination from '../components/Pagination';
 import { Plus, Edit2, Trash2, Filter } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Students = () => {
   const [students, setStudents] = useState([]);
@@ -24,6 +25,7 @@ const Students = () => {
       setStudents(res.data);
     } catch (err) {
       console.error(err);
+      toast.error('Failed to load students');
     }
   };
 
@@ -36,6 +38,7 @@ const Students = () => {
     } catch (err) {
       console.error(err);
       setClassesError('Failed to load classes');
+      toast.error('Failed to load classes');
     } finally {
       setIsClassesLoading(false);
     }
@@ -55,15 +58,17 @@ const Students = () => {
     try {
       if (editingId) {
         await api.put(`/students/${editingId}`, formData);
+        toast.success('Student updated successfully');
       } else {
         await api.post('/students', formData);
+        toast.success('Student created successfully');
       }
       setIsModalOpen(false);
       setFormData({ name: '', email: '', password: '', rollNumber: '', guardianContact: '', classId: '' });
       setEditingId(null);
       fetchStudents();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to save student');
+      toast.error(err.response?.data?.error || 'Failed to save student');
     }
   };
 
@@ -84,9 +89,10 @@ const Students = () => {
     if (window.confirm('Are you sure you want to delete this student?')) {
       try {
         await api.delete(`/students/${id}`);
+        toast.success('Student deleted successfully');
         fetchStudents();
       } catch (err) {
-        alert('Failed to delete student');
+        toast.error(err.response?.data?.error || 'Failed to delete student');
       }
     }
   };

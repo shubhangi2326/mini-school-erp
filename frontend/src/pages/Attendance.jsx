@@ -3,6 +3,7 @@ import api from '../api';
 import { AuthContext } from '../AuthContext';
 import Pagination from '../components/Pagination';
 import { Save, Check, X, Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Attendance = () => {
   const { user } = useContext(AuthContext);
@@ -33,6 +34,7 @@ const Attendance = () => {
         }
       } catch (err) {
         console.error(err);
+        toast.error('Failed to load classes');
       }
     };
     fetchClasses();
@@ -71,6 +73,7 @@ const Attendance = () => {
       setAttendanceRecords(newRecords);
     } catch (err) {
       console.error(err);
+      toast.error('Failed to load students for attendance');
     } finally {
       setLoading(false);
     }
@@ -89,6 +92,7 @@ const Attendance = () => {
       setHistory(filteredRecords);
     } catch (err) {
       console.error(err);
+      toast.error('Failed to load attendance history');
     } finally {
       setLoading(false);
     }
@@ -113,9 +117,9 @@ const Attendance = () => {
         date,
         records
       });
-      alert('Attendance saved successfully!');
+      toast.success('Attendance saved successfully!');
     } catch (err) {
-      alert('Failed to save attendance');
+      toast.error('Failed to save attendance');
     }
   };
 
