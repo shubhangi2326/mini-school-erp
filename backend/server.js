@@ -14,16 +14,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Backend is running!' });
-});
-
-app.get('/api', (req, res) => {
-  res.json({ message: 'API is running!' });
-});
-
-app.use('/api', routes);
-
 const seedAdmin = async () => {
   try {
     const adminExists = await User.findOne({ email: 'admin@school.com' });
@@ -45,19 +35,46 @@ const seedAdmin = async () => {
   }
 };
 
-const PORT = process.env.PORT || 5000;
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI);
+    isConnected = db.connections[0].readyState === 1;
+    console.log('Connected to MongoDB Atlas');
+    await seedAdmin();
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw err;
+  }
+};
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-  console.log('Connected to MongoDB Atlas');
-  seedAdmin();
-  if (process.env.NODE_ENV !== 'production') {
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Backend is running!' });
+});
+
+app.get('/api', (req, res) => {
+  res.json({ message: 'API is running!' });
+});
+
+app.use('/api', routes);
+
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production') {
+  connectDB().then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-  }
-}).catch(err => {
-  console.error('MongoDB connection error:', err);
-});
+  }).catch(console.error);
+}
 
 module.exports = app;
