@@ -63,6 +63,7 @@ This project contains two separate folders: `frontend` (React/Vite) and `backend
 - **MongoDB**: A NoSQL database that offers flexible schema design, excellent for handling relational concepts like Classes populated with Teachers and Students.
 
 ## 4. Implemented Features
+- **Student Role (Bonus)**: Student login with access to their permitted school data/attendance.
 - **Authentication & Roles**: Secure login system with `ADMIN` and `TEACHER` roles. Protects routes based on authorization.
 - **Dashboard**: Role-specific dashboards showing quick statistics (total classes, total students, teachers).
 - **Teacher Management**: Complete CRUD functionality to add, edit, or remove teachers.
