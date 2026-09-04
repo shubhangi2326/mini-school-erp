@@ -10,6 +10,8 @@ import Classes from './pages/Classes';
 import Attendance from './pages/Attendance';
 
 const ProtectedRoute = ({ children, roles }) => {
+
+
   const { user, loading } = useContext(AuthContext);
 
   if (loading) return <div>Loading...</div>;
@@ -24,7 +26,7 @@ const AppRoutes = () => {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        
+
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="attendance" element={<ProtectedRoute roles={['ADMIN', 'TEACHER']}><Attendance /></ProtectedRoute>} />

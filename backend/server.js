@@ -9,7 +9,7 @@ const User = require('./src/models/User');
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: /^http:\/\/localhost:\d+$/,
   credentials: true
 }));
 app.use(express.json());
